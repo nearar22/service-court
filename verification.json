@@ -1,0 +1,13 @@
+{
+  "agreement": "sla-2",
+  "claim": "claim-2",
+  "transactions": [
+    "0xe91f08b84d9a03397b3871403bc370213a14aade7d0b8bd2f1b35340f97cc6a2",
+    "0x4d430afa7f87de6eb53491210b1ff4b6da6698e6867f8ef118245d7645372ca8",
+    "0xff998c1a5d81479deae4ac953f6cec0f46fa158e6f67659cc843b91dc0798cb6",
+    "0x9ee2d456fd27ab140277ee110ffbfc5b179a23d60eef6f5c2c718671b5ced649",
+    "0x066f24b89475b5b067f18940ddc75e6e5d347000c917aac3fc12a55173bcd073"
+  ],
+  "ruling": "BREACH",
+  "severity": 75
+}
