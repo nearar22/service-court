@@ -38,9 +38,9 @@ def write(c,address,fn,args):
     tx=c.write_contract(address=address,function_name=fn,args=args,value=0); print(fn,tx,flush=True); wait(c,tx,fn); return str(tx)
 
 def main():
-    root=os.path.dirname(os.path.dirname(__file__)); desktop=os.path.dirname(os.path.dirname(root))
-    primary=account(env_value(os.path.join(os.path.dirname(root),".env"),"GENLAYER_PRIVATE_KEY"))
-    provider=account(env_value(os.path.join(desktop,"sansh genlayer","accounts.env"),"ACCOUNT_1_GENLAYER_PRIVATE_KEY"))
+    root=os.path.dirname(os.path.dirname(__file__)); shared_env=os.path.join(os.path.dirname(root),".env")
+    primary=account(env_value(shared_env,"GENLAYER_PRIVATE_KEY"))
+    provider=account(env_value(shared_env,"GENLAYER_SECONDARY_PRIVATE_KEY"))
     pc,vc=client(primary),client(provider); deployment=json.load(open(os.path.join(root,"deployment.json"))); address=deployment["address"]
     txs=[]
     txs.append(write(pc,address,"create_agreement",[provider.address,"Production API SLA","Provider will operate the production API continuously for subscribed customers.","Monthly availability must be at least 99.9 percent and incidents acknowledged within 30 minutes.","Announced maintenance with at least 72 hours notice is excluded."]))

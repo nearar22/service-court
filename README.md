@@ -51,7 +51,7 @@ The suite covers party binding, the full settlement lifecycle, wrong-wallet reje
 
 ## Deploy
 
-Set `GENLAYER_PRIVATE_KEY` in `.env`, then run `python scripts/deploy.py`. The script targets Bradbury, waits for a successful consensus status, and writes `deployment.json`.
+Set `GENLAYER_PRIVATE_KEY` in the shared `.env`, then run `python scripts/deploy.py`. For the two-party live verification, also set a separately funded `GENLAYER_SECONDARY_PRIVATE_KEY`, then run `python scripts/verify_live.py`. The scripts target Bradbury.
 
 No funds are held or transferred. Verdicts and suggested remedies are protocol records, not legal advice.
 
