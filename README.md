@@ -2,6 +2,8 @@
 
 ServiceCourt is a reusable two-party SLA adjudication primitive for GenLayer. It turns a natural-language service promise into a wallet-bound agreement, then gives customer and provider a shared process for filing, answering, settling, and appealing an incident claim.
 
+**Bradbury deployment:** [`0xED2E...D067`](https://explorer-bradbury.genlayer.com/address/0xED2E95b237829b4107B5da741Ab1dA061773D067) · [deployment transaction](https://explorer-bradbury.genlayer.com/tx/0xb273dc9955ba61519ba1e5d8a935aa187b45dca27ba2e6d41adc883c38c5e50e)
+
 ## Why this needs an Intelligent Contract
 
 An SLA dispute is not solved by finding a keyword. The same outage can be a breach, an excluded maintenance window, a partial failure, or an unsupported allegation depending on the signed promise, measurable terms, exclusions, and both parties' evidence. GenLayer validators independently read the complete record and must agree on the ruling and severity that mutate state.
@@ -49,7 +51,7 @@ The suite covers party binding, the full settlement lifecycle, wrong-wallet reje
 
 ## Deploy
 
-Set `GENLAYER_PRIVATE_KEY` in `.env`, then run `python scripts/deploy.py`. The script targets Studionet, waits for a successful consensus status, and writes `deployment.json`.
+Set `GENLAYER_PRIVATE_KEY` in `.env`, then run `python scripts/deploy.py`. The script targets Bradbury, waits for a successful consensus status, and writes `deployment.json`.
 
 No funds are held or transferred. Verdicts and suggested remedies are protocol records, not legal advice.
 
