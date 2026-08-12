@@ -35,7 +35,19 @@ def read(c,acct,address,fn,args=None):
     return calldata.decode(eth_utils.hexadecimal.decode_hex("0x"+raw))
 
 def write(c,address,fn,args):
-    tx=c.write_contract(address=address,function_name=fn,args=args,value=0); print(fn,tx,flush=True); wait(c,tx,fn); return str(tx)
+    last=None
+    for attempt in range(5):
+        try:
+            tx=c.write_contract(address=address,function_name=fn,args=args,value=0)
+            print(fn,tx,flush=True); wait(c,tx,fn); return str(tx)
+        except Exception as exc:
+            last=exc
+            transient=any(word in str(exc).lower() for word in ("not processed by consensus","rate limit","backpressure","429","timeout","503"))
+            if not transient or attempt==4: raise
+            delay=20+attempt*15
+            print(fn,"submit retry",attempt+1,"in",delay,"seconds:",exc,flush=True)
+            time.sleep(delay)
+    raise last
 
 def main():
     root=os.path.dirname(os.path.dirname(__file__)); shared_env=os.path.join(os.path.dirname(root),".env")
@@ -46,11 +58,16 @@ def main():
     txs.append(write(pc,address,"create_agreement",[provider.address,"Production API SLA","Provider will operate the production API continuously for subscribed customers.","Monthly availability must be at least 99.9 percent and incidents acknowledged within 30 minutes.","Announced maintenance with at least 72 hours notice is excluded."]))
     stats=read(pc,primary,address,"get_stats"); aid="sla-"+str(stats["agreements"])
     txs.append(write(vc,address,"accept_agreement",[aid]))
-    txs.append(write(pc,address,"file_claim",[aid,"incident-live-1","The production API was unavailable for nearly two hours without any maintenance notice.","Independent monitoring recorded HTTP failures from 10:00 through 11:58 UTC across three regions."]))
+    txs.append(write(pc,address,"file_claim",[aid,"incident-live-appeal","The customer reports a possible production interruption during the signed service window.","The initial alert contains several failed requests but no timestamps, duration, or independent regional coverage."]))
     stats=read(pc,primary,address,"get_stats"); cid="claim-"+str(stats["claims"])
-    txs.append(write(vc,address,"respond_claim",[cid,"We confirm an unannounced database failure affected the production API during that period.","Provider incident logs record the outage, escalation, and restoration after one hour and fifty eight minutes."]))
+    txs.append(write(vc,address,"respond_claim",[cid,"The provider cannot determine a service-level violation from the incomplete initial alert.","Aggregate telemetry shows normal monthly availability but does not resolve the specific disputed interval."]))
     txs.append(write(pc,address,"settle_claim",[cid]))
-    claim=read(pc,primary,address,"get_claim",[cid]); print(json.dumps(claim,indent=2,default=str));
-    if claim["status"]!="SETTLED" or claim["ruling"] not in ("BREACH","PARTIAL_BREACH"): raise RuntimeError("Unexpected live verdict")
-    with open(os.path.join(root,"verification.json"),"w",encoding="utf-8") as f: json.dump({"agreement":aid,"claim":cid,"transactions":txs,"ruling":claim["ruling"],"severity":claim["severity"]},f,indent=2)
+    before=read(pc,primary,address,"get_claim",[cid]); print("BEFORE APPEAL",json.dumps(before,indent=2,default=str))
+    txs.append(write(pc,address,"appeal_claim",[cid,"Independent signed regional monitoring now proves HTTP failure from 10:00 through 11:58 UTC across three production regions, with no maintenance notice issued."]))
+    claim=read(pc,primary,address,"get_claim",[cid]); stats=read(pc,primary,address,"get_stats")
+    print("AFTER APPEAL",json.dumps(claim,indent=2,default=str)); print("STATS",json.dumps(stats,indent=2,default=str))
+    if claim["status"]!="FINAL" or claim["prior_ruling"]!=before["ruling"]: raise RuntimeError("Appeal record is inconsistent")
+    expected=1 if claim["ruling"] in ("BREACH","PARTIAL_BREACH") else 0
+    if stats["breaches"]!=expected: raise RuntimeError("Breach aggregate contradicts final ruling")
+    with open(os.path.join(root,"verification.json"),"w",encoding="utf-8") as f: json.dump({"agreement":aid,"claim":cid,"transactions":txs,"prior_ruling":claim["prior_ruling"],"ruling":claim["ruling"],"severity":claim["severity"],"stats":stats},f,indent=2)
 if __name__=="__main__": main()

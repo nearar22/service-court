@@ -2,13 +2,17 @@
 
 > The uptime chart is red. The invoice says the SLA was met. ServiceCourt gives both parties one shared record and lets GenLayer settle what the promise actually means.
 
-[Bradbury contract](https://explorer-bradbury.genlayer.com/address/0xED2E95b237829b4107B5da741Ab1dA061773D067) | [deployment](https://explorer-bradbury.genlayer.com/tx/0xb273dc9955ba61519ba1e5d8a935aa187b45dca27ba2e6d41adc883c38c5e50e) | MIT
+[Bradbury contract](https://explorer-bradbury.genlayer.com/address/0xEd998f1F2a83b5428d7115F8907A9baF3adf8035) | [deployment](https://explorer-bradbury.genlayer.com/tx/0x7b138fa92d4dfc17f0ff96de870353733ea33b19f1b6e8a92ed74ad71e080544) | MIT
 
 ## Case 002: the two-hour outage
 
 The customer and provider signed a 99.9% availability promise. Later, independent monitors recorded regional HTTP failures from 10:00 to 11:58 UTC. The provider answered from its bound wallet and confirmed an unannounced database failure.
 
-Five accepted Bradbury transactions moved that case through the entire docket:
+The corrected deployment also carries a six-transaction appeal case. Its initial record produced `INSUFFICIENT_EVIDENCE`; signed regional monitoring added on appeal changed the final ruling to `BREACH` at severity 75. The contract simultaneously moved the live breach aggregate from zero to one, so the public statistics and final claim cannot contradict each other.
+
+[Initial settlement](https://explorer-bradbury.genlayer.com/tx/0xa2b3537b66995eb084d2cdf777f8048e14de7dd770939ce9af463826722e07e5) -> [category-changing appeal](https://explorer-bradbury.genlayer.com/tx/0xd2f44c91c57b19f233098b9368a98a743aa99628486b6b69eb0a2763124c5495)
+
+The original five accepted Bradbury transactions moved Case 002 through the entire docket:
 
 ```text
 AGREEMENT FILED
@@ -78,7 +82,7 @@ Read the docket with `get_agreement`, `get_claim`, `list_claims`, and `get_stats
 ## Reproduce the record
 
 ```bash
-python -m pytest -q            # 5 contract tests
+python -m pytest -q            # 6 contract tests
 python scripts/deploy.py       # deploy to Bradbury
 python scripts/verify_live.py  # two-wallet end-to-end case
 ```

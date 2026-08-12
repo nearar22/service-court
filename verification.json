@@ -1,13 +1,22 @@
 {
-  "agreement": "sla-2",
+  "agreement": "sla-6",
   "claim": "claim-2",
   "transactions": [
-    "0xe91f08b84d9a03397b3871403bc370213a14aade7d0b8bd2f1b35340f97cc6a2",
-    "0x4d430afa7f87de6eb53491210b1ff4b6da6698e6867f8ef118245d7645372ca8",
-    "0xff998c1a5d81479deae4ac953f6cec0f46fa158e6f67659cc843b91dc0798cb6",
-    "0x9ee2d456fd27ab140277ee110ffbfc5b179a23d60eef6f5c2c718671b5ced649",
-    "0x066f24b89475b5b067f18940ddc75e6e5d347000c917aac3fc12a55173bcd073"
+    "0xb7cb46443a4b0661acc75f6826c024b45d5b69ad0304c7170d217a75e0de2849",
+    "0x146674f7b4574c1b9836aff2b5d64b83df842f68f8a52de1f0de4d6772e0ec6f",
+    "0xe154257eaa63209701c3628fcd9ccee0974d2a4b93b82c68128f3838ed5eaf00",
+    "0x0ab991a19cc429140d764d7151e5885a39fe23dc0a48f4a7ffbec4f72bdb7b22",
+    "0xa2b3537b66995eb084d2cdf777f8048e14de7dd770939ce9af463826722e07e5",
+    "0xd2f44c91c57b19f233098b9368a98a743aa99628486b6b69eb0a2763124c5495"
   ],
+  "prior_ruling": "INSUFFICIENT_EVIDENCE",
   "ruling": "BREACH",
-  "severity": 75
+  "severity": 75,
+  "stats": {
+    "agreements": 6,
+    "appeals": 1,
+    "breaches": 1,
+    "claims": 2,
+    "settled": 2
+  }
 }
