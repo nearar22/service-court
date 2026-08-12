@@ -60,6 +60,10 @@ def _band(ruling):
     return 0, 33
 
 
+def _is_breach(ruling):
+    return ruling in ("BREACH", "PARTIAL_BREACH")
+
+
 def _normalize(raw):
     raw = _object(raw)
     ruling = _clean(raw.get("ruling", ""), 30).upper()
@@ -246,7 +250,7 @@ class ServiceCourt(gl.Contract):
         agreement["status"] = "ACTIVE"
         self.agreements[claim["agreement"]] = json.dumps(agreement)
         self.total_settled += u256(1)
-        if verdict["ruling"] in ("BREACH", "PARTIAL_BREACH"):
+        if _is_breach(verdict["ruling"]):
             self.total_breaches += u256(1)
         return claim
 
@@ -264,7 +268,9 @@ class ServiceCourt(gl.Contract):
         if len(new_evidence) < 30 or new_evidence in (claim["customer_evidence"], claim["provider_evidence"]):
             raise gl.vm.UserError(ERR_EXPECTED + " Appeal requires material new evidence")
         agreement = json.loads(self.agreements[claim["agreement"]])
+        was_breach = _is_breach(claim["ruling"])
         verdict = self._judge(agreement, claim, new_evidence)
+        is_breach = _is_breach(verdict["ruling"])
         claim["prior_ruling"] = claim["ruling"]
         claim["prior_severity"] = claim["severity"]
         for key in ("ruling", "severity", "rationale", "remedy"):
@@ -274,6 +280,10 @@ class ServiceCourt(gl.Contract):
         claim["status"] = "FINAL"
         self.claims[claim_id] = json.dumps(claim)
         self.total_appeals += u256(1)
+        if was_breach and not is_breach:
+            self.total_breaches -= u256(1)
+        elif not was_breach and is_breach:
+            self.total_breaches += u256(1)
         return claim
 
     @gl.public.view
